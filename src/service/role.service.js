@@ -1,4 +1,4 @@
-const connection = require('../../app/database')
+const connection = require('../app/database')
 const menuService = require('./menu.service')
 
 class RoleService {
@@ -10,7 +10,7 @@ class RoleService {
    */
   async create(role) {
     // 编写 sql 语句
-    const statement = `INSERT INTO role SET ?;`
+    const statement = `INSERT INTO role SET ?;` // 插入数据时，使用 SET，将 JS 对象，转化成记录数据。
 
     // 执行 sql
     const [result] = await connection.query(statement, [role]) // role 为对象，其中 key 为表中字段名，value 为要插入的值。
@@ -26,6 +26,7 @@ class RoleService {
    */
   async list(offset, limit) {
     const statement = `SELECT * FROM role LIMIT ?, ?;`
+
     // 使用 query 方法，要求传入的 offset, limit 必须是 number 类型。
     const [result] = await connection.query(statement, [offset, limit])
     return result
@@ -41,10 +42,12 @@ class RoleService {
   async assignmenu(roleId, menuIds) {
     // 1.先删除之前的关系
     const deleteStatement = `DELETE FROM role_menu WHERE roleId = ?`
+
     await connection.query(deleteStatement, [roleId])
 
     // 2.差人新的值
     const insertStatement = `INSERT INTO role_menu (roleId, menuId) VALUES (?, ?);`
+
     for (const menuId of menuIds) {
       await connection.query(insertStatement, [roleId, menuId])
     }

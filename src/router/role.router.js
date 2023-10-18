@@ -1,6 +1,13 @@
 const KoaRouter = require('@koa/router')
-const { verifyAuth } = require('../../middleware/login.middleware');
-const { create, remove, update, list, detail, assignMenu } = require('../controller/role.controller');
+const { verifyAuth } = require('../middleware/login.middleware')
+const {
+  create,
+  remove,
+  update,
+  list,
+  detail,
+  assignMenu
+} = require('../controller/role.controller')
 
 const roleRouter = new KoaRouter({ prefix: '/role' })
 

@@ -1,4 +1,4 @@
-const connection = require('../../app/database')
+const connection = require('../app/database')
 
 class MenuService {
   /**
@@ -53,26 +53,26 @@ class MenuService {
                       "sort", m3.sort,
                       "permission", m3.permission,
                       "createAt", m3.createAt,
-                      "updateAt", m3.updateAt 
-                    ) 
-                  ) 
+                      "updateAt", m3.updateAt
+                    )
+                  )
                 FROM
-                  menu m3 
+                  menu m3
                 WHERE
-                  m3.parentId = m2.id 
+                  m3.parentId = m2.id
                 ORDER BY
-                  m3.sort 
-              )) 
-          ) 
+                  m3.sort
+              ))
+          )
         FROM
-          menu m2 
+          menu m2
         WHERE
-          m1.id = m2.parentId 
+          m1.id = m2.parentId
         ORDER BY
-          m2.sort 
-        ) children 
+          m2.sort
+        ) children
       FROM
-        menu m1 
+        menu m1
       WHERE
         m1.type = 1;`
 
