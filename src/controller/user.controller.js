@@ -25,6 +25,21 @@ class UserController {
     }
   }
 
+   /**
+   * @description: 此函数用于：获取用户详细信息
+   * @Author: ZeT1an
+   * @param {*} ctx koa ctx
+   * @param {*} next koa next
+   * @return {*}
+   */
+   async detail(ctx, next) {
+    const { userId } = ctx.params;
+
+    const userInfo = await userService.
+
+    // TODO
+  }
+
   /**
    * @description: 此函数用于：根据用户 id，返回用户头像
    * @Author: ZeT1an
