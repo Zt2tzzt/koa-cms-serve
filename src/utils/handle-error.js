@@ -11,8 +11,8 @@ const {
 
 app.on('error', (err, ctx) => {
   console.log('发生错误了~ err:', err)
-  
-  let code = 0
+
+  let code = -1
   let msg = '未知的错误~'
 
   switch (err) {

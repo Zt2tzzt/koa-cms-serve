@@ -8,14 +8,14 @@ class MenuService {
    * @return {*}
    */
   async create(menu) {
-    const statement = `INSERT INTO menu SET ?;`
+    const statement = `INSERT INTO menus SET ?;`
 
     const [result] = await connection.query(statement, [menu])
     return result
   }
 
   /**
-   * @description: 此函数用于：
+   * @description: 此函数用于：获取所有的菜单列表
    * @Author: ZeT1an
    * @return {*}
    */
@@ -23,43 +23,43 @@ class MenuService {
     const statement = `
       SELECT
         m1.id id,
-        m1.NAME NAME,
+        m1.name name,
         m1.type type,
         m1.url url,
         m1.icon icon,
         m1.sort sort,
-        m1.createAt createAt,
-        m1.updateAt updateAt,
+        m1.create_at createAt,
+        m1.update_at updateAt,
         (SELECT
           JSON_ARRAYAGG(
             JSON_OBJECT(
               "id", m2.id,
-              "name", m2.NAME,
+              "name", m2.name,
               "type", m2.type,
-              "parentId", m2.parentId,
+              "parentId", m2.parent_id,
               "url", m2.url,
               "sort", m2.sort,
-              "createAt", m2.createAt,
-              "updateAt", m2.updateAt,
+              "createAt", m2.create_at,
+              "updateAt", m2.update_at,
               "children", (
                 SELECT
                   JSON_ARRAYAGG(
                     JSON_OBJECT(
                       "id", m3.id,
-                      "name", m3.NAME,
+                      "name", m3.name,
                       "type", m3.type,
-                      "parentId", m3.parentId,
+                      "parentId", m3.parent_id,
                       "url", m3.url,
                       "sort", m3.sort,
                       "permission", m3.permission,
-                      "createAt", m3.createAt,
-                      "updateAt", m3.updateAt
+                      "createAt", m3.create_at,
+                      "updateAt", m3.update_at
                     )
                   )
                 FROM
                   menu m3
                 WHERE
-                  m3.parentId = m2.id
+                  m3.parent_id = m2.id
                 ORDER BY
                   m3.sort
               ))
@@ -67,17 +67,84 @@ class MenuService {
         FROM
           menu m2
         WHERE
-          m1.id = m2.parentId
+          m1.id = m2.parent_id
         ORDER BY
           m2.sort
         ) children
       FROM
         menu m1
       WHERE
-        m1.type = 1;`
-
+        m1.type = 1;
+    `
     const [result] = await connection.query(statement)
     return result
+  }
+
+  /**
+   * @description: 此函数用于：根据角色 Id，获取菜单列表。
+   * @Author: ZeT1an
+   * @param {*} roleId
+   * @return {*}
+   */
+  async getMenuByRoleId(roleId) {
+    const statement = `
+      SELECT
+        m1.id id,
+        m1.name name,
+        m1.type type,
+        m1.url url,
+        m1.icon icon,
+        m1.sort sort,
+        m1.create_at createAt,
+        m1.update_at updateAt,
+        (SELECT
+          JSON_ARRAYAGG(
+            JSON_OBJECT(
+              "id", m2.id,
+              "name", m2.name,
+              "type", m2.type,
+              "parentId", m2.parent_id,
+              "url", m2.url,
+              "sort", m2.sort,
+              "createAt", m2.create_at,
+              "updateAt", m2.update_at,
+              "children", (
+                SELECT
+                  JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                      "id", m3.id,
+                      "name", m3.name,
+                      "type", m3.type,
+                      "parentId", m3.parent_id,
+                      "url", m3.url,
+                      "sort", m3.sort,
+                      "permission", m3.permission,
+                      "createAt", m3.create_at,
+                      "updateAt", m3.update_at
+                    )
+                  )
+                FROM
+                  menu m3
+                WHERE
+                  m3.parent_id = m2.id
+                ORDER BY
+                  m3.sort
+              ))
+          )
+        FROM
+          menu m2
+        WHERE
+          m1.id = m2.parent_id
+        ORDER BY
+          m2.sort
+        ) children
+      FROM role_menu rm
+      RIGHT JOIN menu m1
+        ON rm.menu_id = m1.id
+      WHERE rm.role_id = ? AND m1.type = 1
+    `
+    const [menus] = await connection.query(statement, [roleId])
+    return menus
   }
 }
 

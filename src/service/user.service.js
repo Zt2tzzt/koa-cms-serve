@@ -33,6 +33,43 @@ class UserService {
     return values
   }
 
+  async findUserDetailById(userId) {
+    const statement = `
+      SELECT
+        u.id,
+        u.name,
+        u.realname,
+        u.cellphone,
+        u.enable,
+        u.create_at createAt,
+        u.update_at updateAt,
+        JSON_OBJECT(
+          'id', d.id,
+          'name', d.name,
+          'leader', (SELECT name FROM user WHERE Id = d.leader_id),
+          'parentId', d.parent_id,
+          'createAt', d.create_at,
+          'updateAt', d.update_at
+        ) department,
+        JSON_OBJECT(
+          'id', r.id,
+          'name', r.name,
+          'intro', r.intro,
+          'createAt', r.create_at,
+          'updateAt', r.update_at
+        ) role
+      FROM \`user\` u
+        LEFT JOIN department d
+          ON u.department_id = d.id
+        LEFT JOIN role r
+          ON u.role_id = r.id
+      WHERE u.id = ?;
+    `
+
+    const [values] = await connection.execute(statement, [userId]);
+    return values
+  }
+
   /**
    * @description: 此函数用于：根据用户 id，更新 user 表中的 avatar_url 字段
    * @Author: ZeT1an

@@ -1,4 +1,5 @@
 const roleService = require('../service/role.service')
+const menuService = require('../service/menu.service')
 
 class RoleController {
   /**
@@ -35,14 +36,14 @@ class RoleController {
    * @param {*} next
    * @return {*}
    */
-  async list(ctx, next) {
+  async listWithMenus(ctx, next) {
     // 1.获取角色基本信息
     const { offset = 0, limit = 10 } = ctx.query
     const result = await roleService.list(Number(offset), Number(limit))
 
     // 2.获取菜单信息
     for (const role of result) {
-      const menu = await roleService.getRoleMenu(role.id)
+      const menu = await menuService.getMenuByRoleId(role.id)
       console.log('menu:', menu)
       role.menu = menu
     }
@@ -55,7 +56,24 @@ class RoleController {
     }
   }
 
-  async detail(ctx, next) {}
+  /**
+   * @description: 此函数用于：获取角色的菜单
+   * @Author: ZeT1an
+   * @param {*} ctx
+   * @param {*} next
+   * @return {*}
+   */
+  async menus(ctx, next) {
+    const { roleId } = ctx.params;
+
+    const values = await menuService.getMenuByRoleId(roleId)
+
+    ctx.body = {
+      code: 1,
+      msg: '获取角色详情成功~',
+      data: values
+    }
+  }
 
   /**
    * @description: 此函数用于：分配角色菜单。

@@ -48,7 +48,7 @@ class MomentService {
         ) labelCount
       FROM
         moment m
-        LEFT JOIN \`user\` u ON u.id = m.user_id 
+        LEFT JOIN \`user\` u ON u.id = m.user_id
         LIMIT ? OFFSET ?;
     `
     // const [result] = await connection.execute(statement, [String(limit), String(offset)])
@@ -80,21 +80,21 @@ class MomentService {
               'commentId',
               c.comment_id,
               'user',
-              JSON_OBJECT( 'id', cu.id, 'name', cu.name, 'avatarUrl', u.avatar_url) 
-            )) 
+              JSON_OBJECT( 'id', cu.id, 'name', cu.name, 'avatarUrl', u.avatar_url)
+            ))
         FROM
           \`comment\` c
-          LEFT JOIN \`user\` cu ON c.user_id = cu.id 
+          LEFT JOIN \`user\` cu ON c.user_id = cu.id
         WHERE
-          c.moment_id = m.id 
+          c.moment_id = m.id
         ) comments,
-        (JSON_ARRAYAGG( JSON_OBJECT( 'id', l.id, 'name', l.NAME )) ) labels 
-        
+        (JSON_ARRAYAGG( JSON_OBJECT( 'id', l.id, 'name', l.NAME )) ) labels
+
       FROM
         moment m
-        LEFT JOIN \`user\` u ON u.id = m.user_id 
+        LEFT JOIN \`user\` u ON u.id = m.user_id
         LEFT JOIN moment_label ml ON ml.moment_id = m.id
-        LEFT JOIN label l ON ml.label_id = l.id 
+        LEFT JOIN label l ON ml.label_id = l.id
       WHERE
         m.id = ?
       GROUP BY

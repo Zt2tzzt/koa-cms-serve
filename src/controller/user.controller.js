@@ -35,9 +35,11 @@ class UserController {
    async detail(ctx, next) {
     const { userId } = ctx.params;
 
-    const userInfo = await userService.
-
-    // TODO
+    const [userInfo] = await userService.findUserDetailById(userId)
+    ctx.body = {
+      code: 0,
+      data: userInfo
+    }
   }
 
   /**

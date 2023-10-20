@@ -41,60 +41,16 @@ class RoleService {
    */
   async assignmenu(roleId, menuIds) {
     // 1.先删除之前的关系
-    const deleteStatement = `DELETE FROM role_menu WHERE roleId = ?`
+    const deleteStatement = `DELETE FROM role_menu WHERE role_id = ?`
 
     await connection.query(deleteStatement, [roleId])
 
     // 2.差人新的值
-    const insertStatement = `INSERT INTO role_menu (roleId, menuId) VALUES (?, ?);`
+    const insertStatement = `INSERT INTO role_menu (role_id, menu_id) VALUES (?, ?);`
 
     for (const menuId of menuIds) {
       await connection.query(insertStatement, [roleId, menuId])
     }
-  }
-
-  /**
-   * @description: 此函数用于：获取角色对应的菜单权限记录
-   * @Author: ZeT1an
-   * @param {*} roleId 角色 id
-   * @return {Array} 菜单详情对象的数组
-   */
-  async getRoleMenu(roleId) {
-    // 1.根据 roleId，获取所有的 menuId
-    const getMenuIdsStatement = `
-      SELECT rm.roleId, JSON_ARRAYAGG(rm.menuId) menuIds
-      FROM role_menu rm
-      WHERE rm.roleId = ?
-      GROUP BY rm.roleId
-    `
-    const [result] = await connection.query(getMenuIdsStatement, [roleId])
-    console.log('result', result)
-    const menuIds = result?.[0]?.menuIds
-    console.log('menuIds', menuIds)
-
-    if (!menuIds) return []
-
-    // 2.获取完整菜单树
-    const wholeMenu = await menuService.wholeMenu()
-    console.log('wholeMenu:', wholeMenu)
-
-    // 3.从完整菜单树中，过滤 menuId，使用递归
-    function filterMenu(menus) {
-      const newMenu = []
-
-      for (const item of menus) {
-        if (item.children) {
-          item.children = filterMenu(item.children)
-        }
-        if (menuIds.includes(item.id)) {
-          newMenu.push(item)
-        }
-      }
-
-      return newMenu
-    }
-
-    return filterMenu(wholeMenu)
   }
 }
 
