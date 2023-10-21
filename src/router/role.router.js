@@ -21,7 +21,7 @@ roleRouter.delete('/:roleId', verifyAuth, remove)
 roleRouter.patch('/:roleId', verifyAuth, update)
 
 // 查，查询角色列表，和对应的菜单。
-roleRouter.get('/', verifyAuth, listWithMenus)
+roleRouter.post('/list', verifyAuth, listWithMenus)
 
 // 查，根据 id，查询角色，和对应的菜单。
 roleRouter.get('/:roleId/menu', verifyAuth, menus)

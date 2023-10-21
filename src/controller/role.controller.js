@@ -19,7 +19,7 @@ class RoleController {
 
     // 3.返回结果
     ctx.body = {
-      code: 1,
+      code: 0,
       msg: '创建角色成功~',
       data: result
     }
@@ -50,9 +50,12 @@ class RoleController {
 
     // 3.返回响应结果
     ctx.body = {
-      code: 1,
-      msg: '获取角色列表成功~',
-      data: result
+      code: 0,
+      msg: '获取完整角色列表成功~',
+      data: {
+        list: result,
+        totalCount: result.length
+      }
     }
   }
 
@@ -69,7 +72,7 @@ class RoleController {
     const values = await menuService.getMenuByRoleId(roleId)
 
     ctx.body = {
-      code: 1,
+      code: 0,
       msg: '获取角色详情成功~',
       data: values
     }
@@ -93,7 +96,7 @@ class RoleController {
 
     // 3.返回结果
     ctx.body = {
-      code: 1,
+      code: 0,
       msg: '分配权限成功~'
     }
   }

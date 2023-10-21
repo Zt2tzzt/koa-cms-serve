@@ -36,9 +36,33 @@ class UserController {
     const { userId } = ctx.params;
 
     const [userInfo] = await userService.findUserDetailById(userId)
+
     ctx.body = {
       code: 0,
       data: userInfo
+    }
+  }
+
+  /**
+   * @description: 此函数用于：获取用户列表
+   * @Author: ZeT1an
+   * @param {*} ctx
+   * @param {*} next
+   * @return {*}
+   */
+  async list(ctx, next) {
+    const params = ctx.request.body;
+
+    console.log('params:', params)
+
+    const values = await userService.findUserListByParams(params)
+
+    ctx.body = {
+      code: 0,
+      data: {
+        list: values,
+        totalCount: values.length
+      }
     }
   }
 

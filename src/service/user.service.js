@@ -8,17 +8,28 @@ class UserService {
    * @return {object} mysql 返回的结果
    */
   async create(user) {
-    // 1.获取用户 user
     const { name, password } = user
 
-    // 2.拼接 statement
     const statement = 'INSERT INTO `user` (name, password) VALUES (?, ?);'
 
-    // 3.执行 sql 语句
     const [result] = await connection.execute(statement, [name, password])
 
     return result
   }
+
+    /**
+   * @description: 此函数用于：根据用户 id，更新 user 表中的 avatar_url 字段
+   * @Author: ZeT1an
+   * @param {string} avatarUrl 用户头像 url
+   * @param {number} userId 用户 id
+   * @return {object} mysql 返回结果
+   */
+    async updateUserAvatar(avatarUrl, userId) {
+      const statement = `UPDATE user SET avatar_url = ? WHERE id = ?;`
+      const [result] = await connection.execute(statement, [avatarUrl, userId])
+
+      return result
+    }
 
   /**
    * @description: 此函数用于：根据用户名，查询用户
@@ -33,6 +44,12 @@ class UserService {
     return values
   }
 
+  /**
+   * @description: 此函数用于：根据用户 id，查询用户详情
+   * @Author: ZeT1an
+   * @param {*} userId
+   * @return {*}
+   */
   async findUserDetailById(userId) {
     const statement = `
       SELECT
@@ -66,21 +83,64 @@ class UserService {
       WHERE u.id = ?;
     `
 
-    const [values] = await connection.execute(statement, [userId]);
+    const [values] = await connection.execute(statement, [userId])
     return values
   }
 
   /**
-   * @description: 此函数用于：根据用户 id，更新 user 表中的 avatar_url 字段
+   * @description: 此函数用于：根据条件，查找用户列表。
    * @Author: ZeT1an
-   * @param {string} avatarUrl 用户头像 url
-   * @param {number} userId 用户 id
-   * @return {object} mysql 返回结果
+   * @param {*} params 条件：{ name, realname, enable, createAt, size, offset }
+   * @return {*}
    */
-  async updateUserAvatar(avatarUrl, userId) {
-    const statement = `UPDATE user SET avatar_url = ? WHERE id = ?;`
-    const [result] = await connection.execute(statement, [avatarUrl, userId]);
+  async findUserListByParams(params) {
+    const { size, offset } = params
 
+    const whereClauseElements = []
+    const conditions = []
+
+    Object.keys(params).forEach(key => {
+      if (params[key]) {
+        switch (key) {
+          case 'createAt':
+            whereClauseElements.push(whereClauseElements.length > 0 ? `AND ${key} BETEEW ? AND ?` : `${key} BETEEW ? AND ?`)
+            conditions.push(...[new Date(params[key][0]).getTime(), new Date(params[key][1]).getTime()])
+            return;
+          case 'offset':
+          case 'size':
+            return;
+          default:
+            whereClauseElements.push(whereClauseElements.length > 0 ? `AND ${key} = ?` : `${key} = ?`)
+            conditions.push(params[key])
+        }
+      }
+    })
+
+    if (whereClauseElements.length) whereClauseElements.unshift('WHERE')
+    conditions.push(offset, size)
+
+    // console.log('whereClauseElements:', whereClauseElements)
+    // console.log('conditions:', conditions)
+
+    const statement = `
+      SELECT
+        id,
+        \`name\`,
+        realname,
+        role_id roleId,
+        \`enable\`,
+        department_id departmentId,
+        cellphone,
+        create_at createAt,
+        update_at updateAt
+      FROM \`user\`
+      ${whereClauseElements.join(' ')}
+      LIMIT ?, ?;
+    `
+
+    // console.log('statement:', statement)
+
+    const [result] = await connection.query(statement, conditions)
     return result
   }
 }
