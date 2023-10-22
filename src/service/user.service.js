@@ -8,12 +8,17 @@ class UserService {
    * @return {object} mysql 返回的结果
    */
   async create(user) {
-    const { name, password } = user
+    const { name, realname, password, cellphone, enable, roleId, departmentId } = user
+    const statement = 'INSERT INTO `user` (name, realname, password, cellphone, enable, role_id, department_id) VALUES (?, ?, ?, ?, ?, ?, ?);'
+    const [result] = await connection.query(statement, [name, realname, password, cellphone, enable, roleId, departmentId])
+    return result
+  }
 
-    const statement = 'INSERT INTO `user` (name, password) VALUES (?, ?);'
+  async updateUserById(userId, user) {
+    const { name, realname, cellphone, enable, roleId, departmentId } = user
 
-    const [result] = await connection.execute(statement, [name, password])
-
+    const statement = 'UPDATE `user` SET name = ?, realname = ?, cellphone = ?, enable = ?, role_id = ?, department_id = ? WHERE id = ?'
+    const [result] = await connection.query(statement, [name, realname, cellphone, enable, roleId, departmentId, userId])
     return result
   }
 
@@ -28,6 +33,18 @@ class UserService {
       const statement = `UPDATE user SET avatar_url = ? WHERE id = ?;`
       const [result] = await connection.execute(statement, [avatarUrl, userId])
 
+      return result
+    }
+
+    /**
+     * @description: 此函数用于：根据用户 id，更新用户
+     * @Author: ZeT1an
+     * @param {*} userId 用户 id
+     * @return {*}
+     */
+    async removeUserById(userId) {
+      const statement = 'DELETE FROM `user` WHERE id = ?;'
+      const [result] = await connection.execute(statement, [userId])
       return result
     }
 
@@ -103,8 +120,8 @@ class UserService {
       if (params[key]) {
         switch (key) {
           case 'createAt':
-            whereClauseElements.push(whereClauseElements.length > 0 ? `AND ${key} BETEEW ? AND ?` : `${key} BETEEW ? AND ?`)
-            conditions.push(...[new Date(params[key][0]).getTime(), new Date(params[key][1]).getTime()])
+            whereClauseElements.push(whereClauseElements.length > 0 ? `AND create_at BETWEEN ? AND ?` : `create_at BETEEW ? AND ?`)
+            conditions.push(...[params[key][0], params[key][1]])
             return;
           case 'offset':
           case 'size':

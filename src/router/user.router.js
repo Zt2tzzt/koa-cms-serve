@@ -1,5 +1,5 @@
 const KoaRouter = require('@koa/router')
-const { create, detail, list, showAvatarImage } = require('../controller/user.controller')
+const { create, updateUserById, removeUserById, detail, list, showAvatarImage } = require('../controller/user.controller')
 const { verifyUser, handlePassword } = require('../middleware/user.middleware')
 const { verifyAuth } = require('../middleware/login.middleware')
 
@@ -7,10 +7,16 @@ const { verifyAuth } = require('../middleware/login.middleware')
 const userRouter = new KoaRouter({ prefix: '/users' })
 
 // 增：用户注册
-userRouter.post('/', verifyUser, handlePassword, create)
+userRouter.post('/', verifyAuth, verifyUser, handlePassword, create)
+
+// 删：根据用户 id
+userRouter.delete('/:userId', verifyAuth, verifyUser, removeUserById)
+
+// 改：根据用户 id 修改用户
+userRouter.patch('/:userId', verifyAuth, updateUserById)
 
 // 查：获取用户信息
-userRouter.get('/:userId', detail)
+userRouter.get('/:userId', verifyAuth, detail)
 
 // 查：获取用户列表
 userRouter.post('/list', verifyAuth, list)

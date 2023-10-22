@@ -44,7 +44,6 @@ class RoleController {
     // 2.获取菜单信息
     for (const role of result) {
       const menu = await menuService.getMenuByRoleId(role.id)
-      console.log('menu:', menu)
       role.menu = menu
     }
 
