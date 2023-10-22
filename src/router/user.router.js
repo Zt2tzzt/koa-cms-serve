@@ -1,5 +1,5 @@
 const KoaRouter = require('@koa/router')
-const { create, updateUserById, removeUserById, detail, list, showAvatarImage } = require('../controller/user.controller')
+const { create, updateUserById, removeUserById, detail, list, showAvatarImage, authPass } = require('../controller/user.controller')
 const { verifyUser, handlePassword } = require('../middleware/user.middleware')
 const { verifyAuth } = require('../middleware/login.middleware')
 

@@ -12,8 +12,7 @@ const {
 app.on('error', (err, ctx) => {
   console.log('发生错误了~ err:', err)
 
-  let code = -1
-  let msg = '未知的错误~'
+  let code, msg
 
   switch (err) {
     case NAME_OR_PASSWORD_IS_REQUIRED:
@@ -38,12 +37,15 @@ app.on('error', (err, ctx) => {
       break
     case INVALID_AUTHORIZATION:
       code = -1006
-      msg = '无效的授权信息~'
+      msg = '令牌过期，请重新登录~'
+      break
     case OPERATION_IS_NOT_ALLOWED:
       code = -2001,
       msg = '没有操作该资源的权限，或该资源已不存在~'
       break
     default:
+      code = -1
+      msg = '未知的错误~'
       break
   }
 

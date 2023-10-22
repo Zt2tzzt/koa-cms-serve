@@ -115,9 +115,7 @@ class UserController {
     const { filename, mimetype } = avatarInfo;
     ctx.type = mimetype
     ctx.body = fs.createReadStream(`${UPLOAD_PATH}/${filename}`)
-
   }
-
 }
 
 module.exports = new UserController()
