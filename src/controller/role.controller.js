@@ -6,10 +6,9 @@ class RoleController {
    * @description: 此函数用于：创建角色
    * @Author: ZeT1an
    * @param {*} ctx
-   * @param {*} next
    * @return {*}
    */
-  async create(ctx, next) {
+  async create(ctx) {
     // 1.获取到角色的对象信息
     const role = ctx.request.body
     console.log('role:', role)
@@ -25,26 +24,51 @@ class RoleController {
     }
   }
 
-  async remove(ctx, next) {}
-
-  async update(ctx, next) {}
-
   /**
-   * @description: 此函数用于：查询角色列表
+   * @description: 此函数用于：删除角色和角色的菜单
    * @Author: ZeT1an
    * @param {*} ctx
    * @param {*} next
    * @return {*}
    */
-  async listWithMenus(ctx, next) {
+  async remove(ctx, next) {
+    
+  }
+
+  /**
+   * @description: 此函数用于：更新用户信息
+   * @Author: ZeT1an
+   * @param {*} ctx
+   * @return {*}
+   */
+  async update(ctx) {
+    const { roleId } = ctx.params
+    const roleInfo = ctx.request.body
+
+    const result = await roleService.update(roleId, roleInfo)
+
+    ctx.body = {
+      code: 0,
+      msg: '修改角色成功~',
+      data: result
+    }
+  }
+
+  /**
+   * @description: 此函数用于：查询角色列表
+   * @Author: ZeT1an
+   * @param {*} ctx
+   * @return {*}
+   */
+  async listWithMenus(ctx) {
     // 1.获取角色基本信息
     const { offset = 0, limit = 10 } = ctx.query
     const result = await roleService.list(Number(offset), Number(limit))
 
     // 2.获取菜单信息
     for (const role of result) {
-      const menu = await menuService.getMenuByRoleId(role.id)
-      role.menu = menu
+      const menuList = await menuService.getMenuByRoleId(role.id)
+      role.menuList = menuList
     }
 
     // 3.返回响应结果
@@ -62,10 +86,9 @@ class RoleController {
    * @description: 此函数用于：获取角色的菜单
    * @Author: ZeT1an
    * @param {*} ctx
-   * @param {*} next
    * @return {*}
    */
-  async menus(ctx, next) {
+  async detailWithMenus(ctx) {
     const { roleId } = ctx.params;
 
     const values = await menuService.getMenuByRoleId(roleId)
@@ -77,28 +100,7 @@ class RoleController {
     }
   }
 
-  /**
-   * @description: 此函数用于：分配角色菜单。
-   * @Author: ZeT1an
-   * @param {*} ctx
-   * @param {*} next
-   * @return {*}
-   */
-  async assignMenu(ctx, next) {
-    // 1.获取参数
-    const roleId = ctx.params.roleId
-    const menuIds = ctx.request.body.menuIds
-    console.log(roleId, menuIds)
 
-    // 2.分配权限
-    await roleService.assignmenu(roleId, menuIds)
-
-    // 3.返回结果
-    ctx.body = {
-      code: 0,
-      msg: '分配权限成功~'
-    }
-  }
 }
 
 module.exports = new RoleController()

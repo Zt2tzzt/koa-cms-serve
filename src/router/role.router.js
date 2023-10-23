@@ -5,7 +5,7 @@ const {
   remove,
   update,
   listWithMenus,
-  menus,
+  detailWithMenus,
   assignMenu
 } = require('../controller/role.controller')
 
@@ -24,9 +24,6 @@ roleRouter.patch('/:roleId', verifyAuth, update)
 roleRouter.post('/list', verifyAuth, listWithMenus)
 
 // 查，根据 id，查询角色，和对应的菜单。
-roleRouter.get('/:roleId/menu', verifyAuth, menus)
-
-// 给角色分配权限
-roleRouter.post('/:roleId/menu', verifyAuth, assignMenu)
+roleRouter.get('/:roleId/menu', verifyAuth, detailWithMenus)
 
 module.exports = roleRouter

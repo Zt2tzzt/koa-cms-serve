@@ -38,7 +38,7 @@ app.on('error', (err, ctx) => {
       break
     case UNAUTHORIZATION:
       code = -1006
-      msg = '未授权的请求~'
+      msg = '未授权的请求，请重新登录~'
       break
     case INVALID_AUTHORIZATION:
       code = -1007

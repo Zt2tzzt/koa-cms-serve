@@ -125,25 +125,29 @@ class MenuService {
                   )
                 FROM
                   menu m3
+                RIGHT JOIN role_menu rm3
+                  ON rm3.menu_id = m3.id
                 WHERE
-                  m3.parent_id = m2.id
+                  m3.parent_id = m2.id AND rm3.role_id = ?
                 ORDER BY
                   m3.sort
               ))
           )
         FROM
           menu m2
+        RIGHT JOIN role_menu rm2
+          ON rm2.menu_id = m2.id
         WHERE
-          m1.id = m2.parent_id
+          m1.id = m2.parent_id AND rm2.role_id = ?
         ORDER BY
           m2.sort
         ) children
-      FROM role_menu rm
-      RIGHT JOIN menu m1
-        ON rm.menu_id = m1.id
-      WHERE rm.role_id = ? AND m1.type = 1
+      FROM role_menu rm1
+      LEFT JOIN menu m1
+        ON rm1.menu_id = m1.id
+      WHERE rm1.role_id = ? AND m1.type = 1
     `
-    const [menus] = await connection.query(statement, [roleId])
+    const [menus] = await connection.query(statement, [roleId, roleId, roleId])
     return menus
   }
 }
