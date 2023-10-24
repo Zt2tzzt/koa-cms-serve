@@ -1,4 +1,5 @@
 const connection = require('../app/database')
+const getWhereclauseAndConditionByParams = require('../utils/whereClauseAndCondition')
 
 class UserService {
   /**
@@ -111,32 +112,10 @@ class UserService {
    * @return {*}
    */
   async findUserListByParams(params) {
-    const { size, offset } = params
 
-    const whereClauseElements = []
-    const conditions = []
+    const [whereClause, conditions] = getWhereclauseAndConditionByParams(params)
 
-    Object.keys(params).forEach(key => {
-      if (params[key]) {
-        switch (key) {
-          case 'createAt':
-            whereClauseElements.push(whereClauseElements.length > 0 ? `AND create_at BETWEEN ? AND ?` : `create_at BETEEW ? AND ?`)
-            conditions.push(...[params[key][0], params[key][1]])
-            return;
-          case 'offset':
-          case 'size':
-            return;
-          default:
-            whereClauseElements.push(whereClauseElements.length > 0 ? `AND ${key} = ?` : `${key} = ?`)
-            conditions.push(params[key])
-        }
-      }
-    })
-
-    if (whereClauseElements.length) whereClauseElements.unshift('WHERE')
-    conditions.push(offset, size)
-
-    // console.log('whereClauseElements:', whereClauseElements)
+    // console.log('whereClause:', whereClause)
     // console.log('conditions:', conditions)
 
     const statement = `
@@ -151,7 +130,7 @@ class UserService {
         create_at createAt,
         update_at updateAt
       FROM \`user\`
-      ${whereClauseElements.join(' ')}
+      ${whereClause}
       LIMIT ?, ?;
     `
 

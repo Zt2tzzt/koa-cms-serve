@@ -7,7 +7,8 @@ const {
   UNAUTHORIZATION,
   INVALID_AUTHORIZATION,
   OPERATION_IS_NOT_ALLOWED,
-  NAME_IS_REQUIRED
+  NAME_IS_REQUIRED,
+  ROW_IS_REFERENCED
 } = require('../config/error')
 
 app.on('error', (err, ctx) => {
@@ -47,6 +48,10 @@ app.on('error', (err, ctx) => {
     case OPERATION_IS_NOT_ALLOWED:
       code = -2001,
       msg = '没有操作该资源的权限，或该资源已不存在~'
+      break
+    case ROW_IS_REFERENCED:
+      code = -2002,
+      msg = '该资源已被引用，无法删除~'
       break
     default:
       code = -1

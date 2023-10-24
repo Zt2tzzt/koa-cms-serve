@@ -67,7 +67,6 @@ const verifyAuth = async (ctx, next) => {
     // 3.将 user 信息，保存在 ctx 中
     ctx.user = result
   } catch (err) {
-    console.log('err:'.err)
     return ctx.app.emit('error', INVALID_AUTHORIZATION, ctx)
   }
 

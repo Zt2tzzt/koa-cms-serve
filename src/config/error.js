@@ -6,6 +6,7 @@ const PASSWORD_IS_INCORRENT = 'password_is_incorrent'
 const UNAUTHORIZATION = 'unauthorization'
 const INVALID_AUTHORIZATION = 'invalid_authorization'
 const OPERATION_IS_NOT_ALLOWED = 'operation_is_not_allowed'
+const ROW_IS_REFERENCED = 'row_is_referenced'
 
 module.exports = {
   NAME_OR_PASSWORD_IS_REQUIRED,
@@ -15,5 +16,6 @@ module.exports = {
   UNAUTHORIZATION,
   INVALID_AUTHORIZATION,
   OPERATION_IS_NOT_ALLOWED,
-  NAME_IS_REQUIRED
+  NAME_IS_REQUIRED,
+  ROW_IS_REFERENCED
 }

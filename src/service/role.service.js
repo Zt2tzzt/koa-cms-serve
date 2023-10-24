@@ -1,5 +1,5 @@
 const connection = require('../app/database')
-const menuService = require('./menu.service')
+const getWhereclauseAndConditionByParams = require('../utils/whereClauseAndCondition')
 
 class RoleService {
   /**
@@ -14,8 +14,49 @@ class RoleService {
     const [roleRes] = await connection.execute(statement1, [name, intro]) // role 为对象，其中 key 为表中字段名，value 为要插入的值。
 
     const roleId = roleRes.insertId
-    const roleMenuRes = await this.assignmenu(roleId, menuList)
+    const roleMenuRes = await this.assignRoleMenu(roleId, menuList)
     return { roleRes, roleMenuRes }
+  }
+
+  /**
+   * @description: 此函数用于：根据角色 id，删除角色对应的菜单
+   * @Author: ZeT1an
+   * @param {*} roleId 角色 id
+   * @return {*}
+   */
+  async removeRoleMenu(roleId) {
+    // 1.先删除之前的关系
+    const statement1 = `DELETE FROM role_menu WHERE role_id = ?`
+    const [result] = await connection.execute(statement1, [roleId])
+    return result
+  }
+
+  /**
+   * @description: 此函数用于：为角色分配菜单权限，删除原有的记录，向 role_menu 表中插入记录。
+   * @Author: ZeT1an
+   * @param {*} roleId 角色 id
+   * @param {*} menuIds 角色的菜单 id
+   * @return {*}
+   */
+  async assignRoleMenu(roleId, menuIds) {
+    const deleteRoleMenuREs = await this.removeRoleMenu(roleId)
+
+    // 2.差人新的值
+    const statement2 = 'INSERT INTO role_menu (role_id, menu_id) VALUES (?, ?);'
+    const assignRoleMenuRes = await Promise.all(menuIds.map(menuId => connection.execute(statement2, [roleId, menuId]).then(res => res[0])));
+    return { deleteRoleMenuREs, assignRoleMenuRes }
+  }
+
+  /**
+   * @description: 此函数用于：根据 id，删除角色
+   * @Author: ZeT1an
+   * @param {*} roleId 角色 id
+   * @return {*}
+   */
+  async remove(roleId) {
+    const statement = `DELETE FROM role WHERE id = ?;`
+    const [result] = await connection.execute(statement, [roleId])
+    return result
   }
 
   /**
@@ -31,42 +72,39 @@ class RoleService {
     const statement = `UPDATE role SET name = ?, intro = ? WHERE id = ?;`
     const [roleRes] = await connection.execute(statement, [name, intro, roleId])
 
-    const roleMenuRes = await this.assignmenu(roleId, menuList)
+    const roleMenuRes = await this.assignRoleMenu(roleId, menuList)
     return { roleRes, roleMenuRes }
   }
 
   /**
    * @description: 此函数用于：查询 role 表中的记录
    * @Author: ZeT1an
-   * @param {*} offset
-   * @param {*} limit
+   * @param {*} params { size, offset, name, intro, createAt }
    * @return {*}
    */
-  async list(offset, limit) {
-    const statement = `SELECT * FROM role LIMIT ?, ?;`
+  async list(params) {
+    params.offset ||= 0
+    params.size ||= 10
+
+    const [whereClause, conditions] = getWhereclauseAndConditionByParams(params)
+
+    // console.log('whereClause:', whereClause)
+    // console.log('conditions:', conditions)
+
+
+    // TODO 根据条件，拼接查询字符串
+    const statement = `
+      SELECT id, name, intro, create_at, update_at
+      FROM \`role\`
+      ${whereClause}
+      LIMIT ?, ?;
+    `
+
+    // console.log('statement:', statement)
 
     // 使用 query 方法，要求传入的 offset, limit 必须是 number 类型。
-    const [result] = await connection.query(statement, [offset, limit])
+    const [result] = await connection.query(statement, conditions)
     return result
-  }
-
-  /**
-   * @description: 此函数用于：为角色分配菜单权限，删除原有的记录，向 role_menu 表中插入记录。
-   * @Author: ZeT1an
-   * @param {*} roleId 角色 id
-   * @param {*} menuIds 角色的菜单 id
-   * @return {*}
-   */
-  async assignmenu(roleId, menuIds) {
-    // 1.先删除之前的关系
-    const statement1 = `DELETE FROM role_menu WHERE role_id = ?`
-    await connection.execute(statement1, [roleId])
-
-    // 2.差人新的值
-    const statement2 = 'INSERT INTO role_menu (role_id, menu_id) VALUES (?, ?);'
-    const roleMenuRes = await Promise.all(menuIds.map(menuId => connection.execute(statement2, [roleId, menuId]).then(res => res[0])));
-
-    return roleMenuRes
   }
 }
 

@@ -6,7 +6,6 @@ const {
   update,
   listWithMenus,
   detailWithMenus,
-  assignMenu
 } = require('../controller/role.controller')
 
 const roleRouter = new KoaRouter({ prefix: '/role' })
