@@ -72,7 +72,6 @@ class RoleController {
    */
   async listWithMenus(ctx) {
     // 1.获取角色基本信息
-    // TODO
     const params = ctx.request.body
     const result = await roleService.list(params)
 

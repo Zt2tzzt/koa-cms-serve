@@ -43,7 +43,9 @@ class RoleService {
 
     // 2.差人新的值
     const statement2 = 'INSERT INTO role_menu (role_id, menu_id) VALUES (?, ?);'
-    const assignRoleMenuRes = await Promise.all(menuIds.map(menuId => connection.execute(statement2, [roleId, menuId]).then(res => res[0])));
+    const assignRoleMenuRes = await Promise.all(
+      menuIds.map(menuId => connection.execute(statement2, [roleId, menuId]).then(res => res[0]))
+    )
     return { deleteRoleMenuREs, assignRoleMenuRes }
   }
 
@@ -91,8 +93,6 @@ class RoleService {
     // console.log('whereClause:', whereClause)
     // console.log('conditions:', conditions)
 
-
-    // TODO 根据条件，拼接查询字符串
     const statement = `
       SELECT id, name, intro, create_at, update_at
       FROM \`role\`
@@ -106,6 +106,33 @@ class RoleService {
     const [result] = await connection.query(statement, conditions)
     return result
   }
+
+  /**
+   * @description: 此函数用于：根据角色名，查询角色
+   * @Author: ZeT1an
+   * @param {string} name 角色名
+   * @return {object} mysql 返回结果
+   */
+  async findRoleByName(name) {
+    const statement = 'SELECT * FROM `role` WHERE name = ?;'
+    const [values] = await connection.execute(statement, [name])
+
+    return values
+  }
+
+  /**
+   * @description: 此函数用于：判断在数据库中是否已经存在别的角色有相同的 name
+   * @Author: ZeT1an
+   * @param {*} roleId 角色 id
+   * @param {*} name 角色名
+   * @return {*}
+   */
+    async findRoleWithDiffName(roleId, name) {
+      const statement = 'SELECT * FROM `role` WHERE name = ? AND id != ?;'
+      const [values] = await connection.execute(statement, [name, roleId])
+
+      return values
+    }
 }
 
 module.exports = new RoleService()

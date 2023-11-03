@@ -23,6 +23,7 @@ const verifyUser = async (ctx, next) => {
   // 2.判断 name，是否在数据库中已经存在
   const users = await userService.findUserByName(name)
   if (users.length) {
+    ctx.errPartName = '用户名'
     return ctx.app.emit('error', NAME_IS_ALREADY_EXIST, ctx)
   }
 
@@ -35,12 +36,14 @@ const verifyUserinUpdate = async (ctx, next) => {
   const { userId } = ctx.params
   const { name } = ctx.request.body
   if (!name) {
+    ctx.errPartName = '用户名'
     return ctx.app.emit('error', NAME_IS_REQUIRED, ctx)
   }
 
-  // 2.判断 name，是否在数据库中已经存在
+  // 2.判断 name，在数据库中是否已经存在别的用户有相同的 name
   const users = await userService.findUserWithDiffName(userId, name)
   if (users.length) {
+    ctx.errPartName = '用户名'
     return ctx.app.emit('error', NAME_IS_ALREADY_EXIST, ctx)
   }
 

@@ -23,11 +23,11 @@ app.on('error', (err, ctx) => {
       break
     case NAME_IS_REQUIRED:
       code = -1002
-      msg = '用户名不能为空~'
+      msg = `${ctx.errPartName}不能为空~`
       break
     case NAME_IS_ALREADY_EXIST:
       code = -1003
-      msg = '用户名已经被占用，请输入新的用户名~'
+      msg = `${ctx.errPartName}已经被占用，请输入新的用户名~`
       break
     case NAME_IS_NOT_EXIST:
       code = -1004

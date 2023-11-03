@@ -63,7 +63,7 @@ class UserService {
   }
 
   /**
-   * @description: 此函数用于：
+   * @description: 此函数用于：判断在数据库中，是否已经存在别的用户有相同的 name
    * @Author: ZeT1an
    * @param {*} userId 用户 id
    * @param {*} name 用户名
