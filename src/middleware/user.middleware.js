@@ -1,4 +1,8 @@
-const { NAME_OR_PASSWORD_IS_REQUIRED, NAME_IS_REQUIRED, NAME_IS_ALREADY_EXIST } = require('../config/error')
+const {
+  NAME_OR_PASSWORD_IS_REQUIRED,
+  NAME_IS_REQUIRED,
+  NAME_IS_ALREADY_EXIST
+} = require('../config/error')
 const userService = require('../service/user.service')
 const md5password = require('../utils/md5-password')
 
@@ -28,13 +32,14 @@ const verifyUser = async (ctx, next) => {
 
 const verifyUserinUpdate = async (ctx, next) => {
   // 1.验证用户名和密码，是否为空
+  const { userId } = ctx.params
   const { name } = ctx.request.body
   if (!name) {
     return ctx.app.emit('error', NAME_IS_REQUIRED, ctx)
   }
 
   // 2.判断 name，是否在数据库中已经存在
-  const users = await userService.findUserByName(name)
+  const users = await userService.findUserWithDiffName(userId, name)
   if (users.length) {
     return ctx.app.emit('error', NAME_IS_ALREADY_EXIST, ctx)
   }

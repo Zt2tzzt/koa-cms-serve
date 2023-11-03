@@ -63,6 +63,20 @@ class UserService {
   }
 
   /**
+   * @description: 此函数用于：
+   * @Author: ZeT1an
+   * @param {*} userId 用户 id
+   * @param {*} name 用户名
+   * @return {*}
+   */
+  async findUserWithDiffName(userId, name) {
+    const statement = 'SELECT * FROM `user` WHERE name = ? AND id != ?;'
+    const [values] = await connection.execute(statement, [name, userId])
+
+    return values
+  }
+
+  /**
    * @description: 此函数用于：根据用户 id，查询用户详情
    * @Author: ZeT1an
    * @param {*} userId
@@ -115,8 +129,8 @@ class UserService {
 
     const [whereClause, conditions] = getWhereclauseAndConditionByParams(params)
 
-    // console.log('whereClause:', whereClause)
-    // console.log('conditions:', conditions)
+    console.log('whereClause:', whereClause)
+    console.log('conditions:', conditions)
 
     const statement = `
       SELECT
@@ -134,7 +148,7 @@ class UserService {
       LIMIT ?, ?;
     `
 
-    // console.log('statement:', statement)
+    console.log('statement:', statement)
 
     const [result] = await connection.query(statement, conditions)
     return result

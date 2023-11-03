@@ -1,3 +1,5 @@
+const { convertISO8601Time } = require('./cover-time')
+
 /**
  * @description: 此函数用于：根据查询 params，凭借 where sql 字句和 condition 参数数组
  * @Author: ZeT1an
@@ -11,20 +13,21 @@ const getWhereclauseAndConditionByParams = params => {
   const conditions = []
 
   Object.keys(params).forEach(key => {
-    if (!params[key]) return
+    const value = params[key]
+    if (value === undefined || value=== null || value === '') return
 
     switch (key) {
       case 'createAt':
         whereClause +=
           whereClause.length > 0 ? ` AND create_at BETWEEN ? AND ?` : ` create_at BETEEW ? AND ?`
-        conditions.push(...[params[key][0], params[key][1]])
+        conditions.push(...[convertISO8601Time(value[0]), convertISO8601Time(value[1])])
         return
       case 'offset':
       case 'size':
         return
       default:
         whereClause += whereClause.length > 0 ? ` AND ${key} = ?` : ` ${key} = ?`
-        conditions.push(params[key])
+        conditions.push(value)
     }
   })
 
