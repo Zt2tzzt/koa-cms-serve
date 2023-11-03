@@ -129,8 +129,8 @@ class UserService {
 
     const [whereClause, conditions] = getWhereclauseAndConditionByParams(params)
 
-    console.log('whereClause:', whereClause)
-    console.log('conditions:', conditions)
+    // console.log('whereClause:', whereClause)
+    // console.log('conditions:', conditions)
 
     const statement = `
       SELECT
@@ -148,7 +148,7 @@ class UserService {
       LIMIT ?, ?;
     `
 
-    console.log('statement:', statement)
+    // console.log('statement:', statement)
 
     const [result] = await connection.query(statement, conditions)
     return result

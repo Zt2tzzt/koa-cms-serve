@@ -1,5 +1,4 @@
 const {
-  NAME_OR_PASSWORD_IS_REQUIRED,
   NAME_IS_REQUIRED,
   NAME_IS_ALREADY_EXIST
 } = require('../config/error')
