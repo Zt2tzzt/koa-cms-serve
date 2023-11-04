@@ -1,4 +1,5 @@
 const departmentService = require('../service/department.service')
+const { ROW_IS_REFERENCED } = require('../config/error')
 
 class MenuController {
   /**
@@ -19,6 +20,27 @@ class MenuController {
       code: 0,
       msg: '创建部门成功~',
       data: result
+    }
+  }
+
+  /**
+   * @description: 此函数用于：删除部门
+   * @Author: ZeT1an
+   * @param {*} ctx
+   * @return {*}
+   */
+  async remove(ctx) {
+    const { departmentId } = ctx.params;
+
+    try {
+      const data = await departmentService.remove(departmentId)
+      ctx.body = {
+        code: 0,
+        msg: '删除部门成功~',
+        data
+      }
+    } catch (err) {
+      if (err.code === 'ER_ROW_IS_REFERENCED_2') return ctx.app.emit('error', ROW_IS_REFERENCED, ctx)
     }
   }
 

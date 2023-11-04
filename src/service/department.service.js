@@ -17,6 +17,19 @@ class DepartmentService {
   }
 
   /**
+   * @description: 此函数用于：删除部门记录
+   * @Author: ZeT1an
+   * @param {*} departmentId 部门 id
+   * @return {*}
+   */
+  async remove(departmentId) {
+    const statement1 = `DELETE FROM department WHERE id = ?;`
+    const [result] = await connection.execute(statement1, [departmentId])
+
+    return result
+  }
+
+  /**
    * @description: 此函数用于：此函数用于：更新部门信息
    * @Author: ZeT1an
    * @param {*} departmentId 部门 id
