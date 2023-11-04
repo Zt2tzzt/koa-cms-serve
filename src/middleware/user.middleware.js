@@ -1,10 +1,10 @@
 const {
-  NAME_OR_PASSWORD_IS_REQUIRED,
-  NAME_IS_REQUIRED,
-  NAME_IS_ALREADY_EXIST
+  NAME_OR_PASSWORD_IS_REQUIRED
 } = require('../config/error')
 const userService = require('../service/user.service')
 const md5password = require('../utils/md5-password')
+const verifyNameRequired = require('./handle-error/verifyNameRequired')
+const verifyNameAlreadyExist = require('./handle-error/verifyNameAlreadyExist')
 
 /**
  * @description: 此中间件用于：验证客户端传递过来的 user 是否可以保存到数据库中
@@ -22,10 +22,7 @@ const verifyUser = async (ctx, next) => {
 
   // 2.判断 name，是否在数据库中已经存在
   const users = await userService.findUserByName(name)
-  if (users.length) {
-    ctx.errPartName = '用户名'
-    return ctx.app.emit('error', NAME_IS_ALREADY_EXIST, ctx)
-  }
+  if (!verifyNameAlreadyExist(ctx, users, '用户名')) return
 
   // 3.执行下一个中间件
   await next()
@@ -35,17 +32,11 @@ const verifyUserinUpdate = async (ctx, next) => {
   // 1.验证用户名和密码，是否为空
   const { userId } = ctx.params
   const { name } = ctx.request.body
-  if (!name) {
-    ctx.errPartName = '用户名'
-    return ctx.app.emit('error', NAME_IS_REQUIRED, ctx)
-  }
+  if (!verifyNameRequired(name, '用户名')) return
 
   // 2.判断 name，在数据库中是否已经存在别的用户有相同的 name
   const users = await userService.findUserWithDiffName(userId, name)
-  if (users.length) {
-    ctx.errPartName = '用户名'
-    return ctx.app.emit('error', NAME_IS_ALREADY_EXIST, ctx)
-  }
+  if (!verifyNameAlreadyExist(ctx, users, '用户名')) return
 
   // 3.执行下一个中间件
   await next()

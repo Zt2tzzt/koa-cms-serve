@@ -94,7 +94,12 @@ class RoleService {
     // console.log('conditions:', conditions)
 
     const statement = `
-      SELECT id, name, intro, create_at, update_at
+      SELECT
+        id,
+        name,
+        intro,
+        create_at createAt,
+        update_at updateAt
       FROM \`role\`
       ${whereClause}
       LIMIT ?, ?;

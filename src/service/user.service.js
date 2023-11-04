@@ -95,7 +95,7 @@ class UserService {
         JSON_OBJECT(
           'id', d.id,
           'name', d.name,
-          'leader', (SELECT name FROM user WHERE Id = d.leader_id),
+          'leader', d.leader,
           'parentId', d.parent_id,
           'createAt', d.create_at,
           'updateAt', d.update_at

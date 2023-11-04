@@ -19,7 +19,7 @@ const getWhereclauseAndConditionByParams = params => {
     switch (key) {
       case 'createAt':
         whereClause +=
-          whereClause.length > 0 ? ` AND create_at BETWEEN ? AND ?` : ` create_at BETEEW ? AND ?`
+          whereClause.length > 0 ? ` AND create_at BETWEEN ? AND ?` : ` create_at BETWEEN ? AND ?`
         conditions.push(...[convertISO8601Time(value[0]), convertISO8601Time(value[1])])
         return
       case 'offset':
