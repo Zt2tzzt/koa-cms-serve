@@ -22,6 +22,13 @@ const verifyRole = async (ctx, next) => {
   await next()
 }
 
+/**
+ * @description: 此中间件用于：验证客户端传递过来的 role 名称，是否在数据库中已存在
+ * @Author: ZeT1an
+ * @param {*} ctx koa ctx
+ * @param {*} next koa next
+ * @return {*}
+ */
 const verifyRoleinUpdate = async (ctx, next) => {
   // 1.验证角色名和密码，是否为空
   const { roleId } = ctx.params

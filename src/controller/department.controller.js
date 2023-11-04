@@ -23,6 +23,25 @@ class MenuController {
   }
 
   /**
+   * @description: 此函数用于：更新部门信息
+   * @Author: ZeT1an
+   * @param {*} ctx koa ctx
+   * @return {*}
+   */
+  async update(ctx) {
+    const { departmentId } = ctx.params
+    const departmentInfo = ctx.request.body
+
+    const data = await departmentService.update(departmentId, departmentInfo)
+
+    ctx.body = {
+      code: 0,
+      msg: '修改部门成功~',
+      data
+    }
+  }
+
+  /**
    * @description: 此函数用于：获取完整部门列表
    * @Author: ZeT1an
    * @param {*} ctx koa ctx
