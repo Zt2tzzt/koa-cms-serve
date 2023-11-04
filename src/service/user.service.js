@@ -126,7 +126,6 @@ class UserService {
    * @return {*}
    */
   async findUserListByParams(params) {
-
     const [whereClause, conditions] = getWhereclauseAndConditionByParams(params)
 
     // console.log('whereClause:', whereClause)

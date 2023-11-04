@@ -1,4 +1,5 @@
 const connection = require('../app/database')
+const getWhereclauseAndConditionByParams = require('../utils/whereClauseAndCondition')
 
 class DepartmentService {
   /**
@@ -7,20 +8,46 @@ class DepartmentService {
    * @param {*} department: {name, leader, parentId} 角色和菜单信息
    * @return {*}
    */
-    async create(department) {
-      const { name, leader, parentId } = department
-      const statement1 = `INSERT INTO department (name, leader, parent_id) VALUES (?, ?, ?);`
-      const [result] = await connection.execute(statement1, [name, leader, parentId])
-      
-      return result
-    }
+  async create(department) {
+    const { name, leader, parentId } = department
+    const statement1 = `INSERT INTO department (name, leader, parent_id) VALUES (?, ?, ?);`
+    const [result] = await connection.execute(statement1, [name, leader, parentId])
+
+    return result
+  }
 
   /**
    * @description: 此函数用于：获取完整的部门列表
    * @Author: ZeT1an
+   * @param {*} params: {name, leader, createAt} 角色和菜单信息
    * @return {*}
    */
-  async wholeDepartmen() {
+  async findDepartmentListByParams(params) {
+    const [whereClause, conditions] = getWhereclauseAndConditionByParams(params)
+
+    // console.log('whereClause:', whereClause)
+    // console.log('conditions:', conditions)
+
+    const statement = `
+      SELECT
+        id,
+        \`name\`,
+        leader,
+        (SELECT name FROM department WHERE id = d.parent_id) parentName,
+        create_at createAt,
+        update_at updateAt
+      FROM department d
+      ${whereClause}
+      LIMIT ?, ?;
+    `
+
+    // console.log('statement:', statement)
+
+    const [result] = await connection.query(statement, conditions)
+    return result
+  }
+
+  async wholeDepartmentList() {
     const statement = `
       SELECT
         id,
@@ -31,7 +58,6 @@ class DepartmentService {
         update_at updateAt
       FROM department d
     `
-
     const [result] = await connection.execute(statement)
     return result
   }

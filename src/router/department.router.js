@@ -8,6 +8,9 @@ const departmentRouter = new KoaRouter({ prefix: '/department'})
 // 增，新增部门
 departmentRouter.post('/', verifyAuth, verifyDepartment, create)
 
+// 改，修改部门
+departmentRouter.post('/', verifyAuth, verifyDepartment, create)
+
 // 查，查询部门列表
 departmentRouter.post('/list', verifyAuth, list)
 

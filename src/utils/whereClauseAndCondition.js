@@ -7,7 +7,7 @@ const { convertISO8601Time } = require('./cover-time')
  * @return {*}
  */
 const getWhereclauseAndConditionByParams = params => {
-  const { size, offset } = params
+  const { size = 10, offset = 0 } = params
 
   let whereClause = ''
   const conditions = []
