@@ -4,13 +4,26 @@ class MenuService {
   /**
    * @description: 此函数用于：
    * @Author: ZeT1an
-   * @param {*} menu
+   * @param {*} {name, type, icon, parentId, url, permission, sort} menuInfo
    * @return {*}
    */
-  async create(menu) {
-    const statement = `INSERT INTO menus SET ?;`
+  async create(menuInfo) {
+    const {name, type, icon, url, permission} = menuInfo;
+    let {parentId, sort} = menuInfo;
+    parentId ??= null
+    sort = parseInt(sort)
 
-    const [result] = await connection.query(statement, [menu])
+    console.log('name:', name, 'type:', typeof name)
+    console.log('type:', type, 'type:', typeof type)
+    console.log('icon:', icon, 'type:', typeof icon)
+    console.log('parentId:', parentId, 'type:', typeof parentId)
+    console.log('url:', url, 'type:', typeof url)
+    console.log('permission:', permission, 'type:', typeof permission)
+    console.log('sort:', sort, 'type:', typeof sort)
+
+    const statement = `INSERT INTO menu (name, type, icon, parent_id, url, permission, sort) VALUES (?, ?, ?, ?, ?, ?, ?);`
+
+    const [result] = await connection.query(statement, [name, type, icon, parentId, url, permission, sort])
     return result
   }
 
