@@ -11,7 +11,7 @@ const departmentRouter = new KoaRouter({ prefix: '/department' })
 // 增，新增部门
 departmentRouter.post('/', verifyAuth, verifyDepartment, create)
 
-// 删
+// 删，删除部门
 departmentRouter.delete('/:departmentId', verifyAuth, remove)
 
 // 改，修改部门

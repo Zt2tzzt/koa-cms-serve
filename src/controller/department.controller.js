@@ -10,10 +10,10 @@ class MenuController {
    */
   async create(ctx) {
     // 1.获取到角色的对象信息
-    const department = ctx.request.body
+    const departmentInfo = ctx.request.body
 
     // 2.将数据插入到数据库中。
-    const result = await departmentService.create(department)
+    const result = await departmentService.create(departmentInfo)
 
     // 3.返回结果
     ctx.body = {
