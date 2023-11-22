@@ -2,33 +2,105 @@ const connection = require('../app/database')
 
 class MenuService {
   /**
-   * @description: 此函数用于：
+   * @description: 此方法用于：创建菜单
    * @Author: ZeT1an
    * @param {*} {name, type, icon, parentId, url, permission, sort} menuInfo
    * @return {*}
    */
   async create(menuInfo) {
-    const {name, type, icon, url, permission} = menuInfo;
-    let {parentId, sort} = menuInfo;
+    const { name, type } = menuInfo
+    let { parentId, sort, icon, url, permission } = menuInfo
     parentId ??= null
     sort = parseInt(sort)
-
-    console.log('name:', name, 'type:', typeof name)
-    console.log('type:', type, 'type:', typeof type)
-    console.log('icon:', icon, 'type:', typeof icon)
-    console.log('parentId:', parentId, 'type:', typeof parentId)
-    console.log('url:', url, 'type:', typeof url)
-    console.log('permission:', permission, 'type:', typeof permission)
-    console.log('sort:', sort, 'type:', typeof sort)
+    icon ||= null
+    url ||= null
+    permission ||= null
 
     const statement = `INSERT INTO menu (name, type, icon, parent_id, url, permission, sort) VALUES (?, ?, ?, ?, ?, ?, ?);`
 
-    const [result] = await connection.query(statement, [name, type, icon, parentId, url, permission, sort])
+    const [result] = await connection.query(statement, [
+      name,
+      type,
+      icon,
+      parentId,
+      url,
+      permission,
+      sort
+    ])
     return result
   }
 
   /**
-   * @description: 此函数用于：获取所有的菜单列表
+   * @description: 此方法用于：根据 id，删除菜单
+   * @Author: ZeT1an
+   * @param {*} menuId 菜单 id
+   * @return {*}
+   */
+  async remove(menuId) {
+    const statement = 'DELETE FROM menu WHERE id = ?'
+    const [result] = await connection.execute(statement, [menuId])
+    return result
+  }
+
+  /**
+   * @description: 此方法用于：修改菜单
+   * @Author: ZeT1an
+   * @param {*} menuId 菜单id
+   * @param {*} menuInfo 菜单信息
+   * @return {*}
+   */
+  async update(menuId, menuInfo) {
+    const { name, type } = menuInfo
+    let { parentId, sort, icon, url, permission } = menuInfo
+    parentId ||= null
+    sort = parseInt(sort)
+    icon ||= null
+    url ||= null
+    permission ||= null
+
+    const statement = `UPDATE menu SET name = ?, type = ?, icon = ?, parent_id = ?, url = ?, permission = ?, sort = ? WHERE id = ?;`
+
+    const [result] = await connection.execute(statement, [
+      name,
+      type,
+      icon,
+      parentId,
+      url,
+      permission,
+      sort,
+      menuId
+    ])
+    return result
+  }
+
+  /**
+   * @description: 此方法用于：判断是否有重名的菜单名称
+   * @Author: ZeT1an
+   * @param {*} name
+   * @return {*}
+   */
+  async findMenuByName(name) {
+    const statement = 'SELECT * FROM menu WHERE name = ?'
+
+    const [values] = await connection.execute(statement, [name])
+    return values
+  }
+
+  /**
+   * @description: 此方法用于：判断在数据库中是否已经存在别的菜单那有相同的名称
+   * @Author: ZeT1an
+   * @param {*} menuId 菜单 Id
+   * @param {*} name 菜单名称
+   * @return {*}
+   */
+  async findMenuWithDiffName(menuId, name) {
+    const statement = 'SELECT * FROM menu WHERE name = ? AND id != ?;'
+    const [values] = await connection.execute(statement, [name, menuId])
+    return values
+  }
+
+  /**
+   * @description: 此方法用于：获取所有的菜单列表
    * @Author: ZeT1an
    * @return {*}
    */
@@ -94,7 +166,7 @@ class MenuService {
   }
 
   /**
-   * @description: 此函数用于：根据角色 Id，获取菜单列表。
+   * @description: 此方法用于：根据角色 Id，获取菜单列表。
    * @Author: ZeT1an
    * @param {*} roleId
    * @return {*}
