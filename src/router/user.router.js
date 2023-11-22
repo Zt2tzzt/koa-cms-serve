@@ -28,7 +28,4 @@ userRouter.get('/:userId', verifyAuth, detail)
 // 查：获取用户列表
 userRouter.post('/list', verifyAuth, list)
 
-// 查：获取用户头像
-userRouter.get('/avatar/:userId', showAvatarImage)
-
 module.exports = userRouter
