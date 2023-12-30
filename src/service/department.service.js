@@ -9,7 +9,8 @@ class DepartmentService {
    * @return {*}
    */
   async create(departmentInfo) {
-    const { name, leader, parentId } = departmentInfo
+    const { name, leader } = departmentInfo
+    const parentId = departmentInfo.parentId || null
     const statement1 = `INSERT INTO department (name, leader, parent_id) VALUES (?, ?, ?);`
     const [result] = await connection.execute(statement1, [name, leader, parentId])
 
