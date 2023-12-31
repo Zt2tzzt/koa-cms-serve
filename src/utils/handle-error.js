@@ -8,7 +8,8 @@ const {
   INVALID_AUTHORIZATION,
   OPERATION_IS_NOT_ALLOWED,
   NAME_IS_REQUIRED,
-  ROW_IS_REFERENCED
+  ROW_IS_REFERENCED,
+  UNAVALIABLE_ACCOUNTS
 } = require('../config/error')
 
 app.on('error', (err, ctx) => {
@@ -52,6 +53,10 @@ app.on('error', (err, ctx) => {
     case ROW_IS_REFERENCED:
       code = -2002,
       msg = '该资源已被引用，无法删除~'
+      break
+    case UNAVALIABLE_ACCOUNTS:
+      code = -2003,
+      msg = '不可用的账户~'
       break
     default:
       code = -1

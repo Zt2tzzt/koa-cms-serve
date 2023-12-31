@@ -9,7 +9,7 @@ class LoginController {
    * @param {*} next koa next
    * @return {*}
    */
-  login(ctx, next) {
+  login(ctx) {
     // 1.获取用户信息
     const { id, name } = ctx.user
 

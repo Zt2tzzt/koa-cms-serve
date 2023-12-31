@@ -3,7 +3,8 @@ const {
   NAME_IS_NOT_EXIST,
   PASSWORD_IS_INCORRENT,
   UNAUTHORIZATION,
-  INVALID_AUTHORIZATION
+  INVALID_AUTHORIZATION,
+  UNAVALIABLE_ACCOUNTS
 } = require('../config/error')
 const userService = require('../service/user.service')
 const md5password = require('../utils/md5-password')
@@ -32,7 +33,12 @@ const verifyLogin = async (ctx, next) => {
     return ctx.app.emit('error', NAME_IS_NOT_EXIST, ctx)
   }
 
-  // 3.查询数据库中，密码和用户传递的密码，是否一直
+  // 3.验证用户是否被禁用
+  if (!user.enable) {
+    return ctx.app.emit('error', UNAVALIABLE_ACCOUNTS, ctx)
+  }
+
+  // 4.查询数据库中，密码和用户传递的密码，是否一直
   if (user.password !== md5password(password)) {
     return ctx.app.emit('error', PASSWORD_IS_INCORRENT, ctx)
   }
