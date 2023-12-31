@@ -113,6 +113,7 @@ class MenuService {
         m1.url url,
         m1.icon icon,
         m1.sort sort,
+        m1.permission permission,
         m1.create_at createAt,
         m1.update_at updateAt,
         (SELECT
@@ -124,6 +125,7 @@ class MenuService {
               "parentId", m2.parent_id,
               "url", m2.url,
               "sort", m2.sort,
+              "permission", m2.permission,
               "createAt", m2.create_at,
               "updateAt", m2.update_at,
               "children", (
